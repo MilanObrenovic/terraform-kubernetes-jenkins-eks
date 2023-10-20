@@ -38,3 +38,37 @@ module "vpc" {
 		"kubernetes.io/role/internal-elb"      = 1
 	}
 }
+
+module "eks" {
+	# Use the AWS EKS module from the Terraform Registry
+	source = "terraform-aws-modules/eks/aws"
+
+	# Specify the name for the EKS cluster
+	cluster_name    = "my-eks-cluster"
+	# Set the desired Kubernetes version for the EKS cluster
+	cluster_version = "1.27"
+
+	# Reference the VPC ID created by the `module.vpc`
+	vpc_id     = module.vpc.vpc_id
+	# Reference the private subnets from the `module.vpc` to launch EKS nodes in private subnets
+	subnet_ids = module.vpc.private_subnets
+
+	# Define the managed node group(s) configuration within the EKS cluster
+	eks_managed_node_groups = {
+		node = {
+			# Set the minimum, maximum, and desired number of nodes in the node group
+			min_size     = 1
+			max_size     = 3
+			desired_size = 2
+
+			# Specify the instance type(s) for the nodes
+			instance_type = ["t2.small"]
+		}
+	}
+
+	# Add tags to resources created by this module, such as the EKS cluster
+	tags = {
+		Environment = "dev"
+		Terraform   = "true"
+	}
+}
