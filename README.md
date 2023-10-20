@@ -67,8 +67,8 @@ Service (EKS) Cluster, through Terraform.
 
 # 6. Networking
 
-- In [terraform.tfvars](jenkins-server/terraform.tfvars) of the Jenkins server, for example, a VPC and CIDR has been
-	defined:
+- In [terraform.tfvars](eks/terraform.tfvars) of the EKS configuration, for example, the VPC CIDR and public subnets
+	have been defined:
 
 ```hcl
 vpc_cidr       = "192.168.0.0/16"
@@ -112,5 +112,5 @@ public_subnets = ["192.168.1.0/24"]
 	- With 16 bits for hosts, you have 2^16 (or 65,536) possible host addresses within that network.
 - `/24`:
 	- In a CIDR notation like `/24`, 24 bits are fixed for the network portion of the IP address.
-  - This leaves 8 bits for host addresses (32-24=8).
-  - With 8 bits for hosts, you have 2^8 (or 256) possible host addresses within that network.
+	- This leaves 8 bits for host addresses (32-24=8).
+	- With 8 bits for hosts, you have 2^8 (or 256) possible host addresses within that network.
