@@ -14,8 +14,10 @@ module "vpc" {
 	# Define the list of public subnets
 	public_subnets = var.public_subnets
 
+	# Automatically assign public IP addresses to instances in the public subnets
+	map_public_ip_on_launch = true
 	# Enable DNS hostnames for resources in the VPC
-	enable_dns_hostnames = true
+	enable_dns_hostnames    = true
 
 	# Set tags for the VPC
 	tags = {
