@@ -82,19 +82,30 @@ module "sg" {
 
 # EC2
 module "ec2_instance" {
+	# Use the AWS EC2 instance module from the Terraform Registry
 	source = "terraform-aws-modules/ec2-instance/aws"
 
+	# Set a name for the EC2 instance
 	name = "Jenkins-Server"
 
+	# Specify the EC2 instance type from a variable
 	instance_type               = var.instance_type
+	# Define the SSH key pair name to be used for instance access
 	key_name                    = "devops"
+	# Enable detailed monitoring for the EC2 instance
 	monitoring                  = true
+	# Associate the EC2 instance with a security group defined in a separate module
 	vpc_security_group_ids      = [module.sg.security_group_id]
+	# Specify the subnet for the EC2 instance. Use the first public subnet created in the VPC
 	subnet_id                   = module.vpc.public_subnets[0]
+	# Assign a public IP address to the EC2 instance so we can access the Jenkins server through it
 	associate_public_ip_address = true
+	# Provide user data script for EC2 instance configuration
 	user_data                   = file("jenkins-install.sh")
+	# Set the availability zone for the EC2 instance
 	availability_zone           = data.aws_availability_zones.azs.names[0]
 
+	# Set tags for the EC2 instance
 	tags = {
 		Name        = "Jenkins-Server"
 		Terraform   = "true"
