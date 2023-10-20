@@ -1,63 +1,83 @@
 # VPC
+# Create a VPC for a Jenkins server with public subnets and DNS hostnames enabled
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+	# Use the AWS VPC module from the Terraform Registry
+	source = "terraform-aws-modules/vpc/aws"
 
-  name = "jenkins-vpc"
-  cidr = var.vpc_cidr
+	# Set the name for the VPC
+	name = "jenkins-vpc"
+	# Define the VPC's CIDR block range
+	cidr = var.vpc_cidr
 
-  azs            = data.aws_availability_zones.azs.names
-  public_subnets = var.public_subnets
+	# Retrieve the availability zone names
+	azs            = data.aws_availability_zones.azs.names
+	# Define the list of public subnets
+	public_subnets = var.public_subnets
 
-  enable_dns_hostnames = true
+	# Enable DNS hostnames for resources in the VPC
+	enable_dns_hostnames = true
 
-  tags = {
-    Name        = "jenkins-vpc"
-    Terraform   = "true"
-    Environment = "dev"
-  }
+	# Set tags for the VPC
+	tags = {
+		Name        = "jenkins-vpc"
+		Terraform   = "true"
+		Environment = "dev"
+	}
 
-  public_subnet_tags = {
-    Name = "jenkins-subnet"
-  }
+	# Set tags for the public subnets
+	public_subnet_tags = {
+		Name = "jenkins-subnet"
+	}
 }
 
 # SG
+# Create a security group for Jenkins server with specific ingress and egress rules
 module "sg" {
-  source = "terraform-aws-modules/security-group/aws"
+	#  Use the AWS security group module
+	source = "terraform-aws-modules/security-group/aws"
 
-  name        = "jenkins-sg"
-  description = "Security Group for Jenkins Server."
-  vpc_id      = module.vpc.vpc_id
+	# Set the name for the security group
+	name        = "jenkins-sg"
+	# Provide a description for the security group
+	description = "Security Group for Jenkins Server."
+	# Associate the security group with the VPC created earlier
+	vpc_id      = module.vpc.vpc_id
 
-  ingress_with_cidr_blocks = [
-    {
-      from_port   = 8080
-      to_port     = 8080
-      protocol    = "tcp"
-      description = "HTTP"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      description = "SSH"
-      cidr_blocks = "0.0.0.0/0"
-    }
-  ]
+	# Define inbound rules for the security group
+	ingress_with_cidr_blocks = [
+		{
+			# Allow incoming HTTP traffic so that we can access Jenkins server on port 8080
+			from_port   = 8080
+			to_port     = 8080
+			protocol    = "tcp"
+			description = "HTTP"
+			cidr_blocks = "0.0.0.0/0"
+		},
+		{
+			# Allow incoming SSH traffic so that we can access via SSH
+			from_port   = 22
+			to_port     = 22
+			protocol    = "tcp"
+			description = "SSH"
+			cidr_blocks = "0.0.0.0/0"
+		}
+	]
 
-  egress_with_cidr_blocks = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = "0.0.0.0/0"
-    }
-  ]
+	# Define outbound rules for the security group
+	egress_with_cidr_blocks = [
+		{
+			# Allow all outbound traffic from the Jenkins server
+			from_port   = 0
+			to_port     = 0
+			protocol    = "-1"
+			cidr_blocks = "0.0.0.0/0"
+		}
+	]
 
-  tags = {
-    Name = "jenkins-sg"
-  }
+	# Set tags for the security group
+	tags = {
+		Name = "jenkins-sg"
+	}
 }
 
 # EC2
