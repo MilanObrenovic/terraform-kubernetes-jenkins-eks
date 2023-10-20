@@ -48,6 +48,9 @@ module "eks" {
 	# Set the desired Kubernetes version for the EKS cluster
 	cluster_version = "1.27"
 
+	# Allow public access to the Kubernetes API server
+	cluster_endpoint_public_access = true
+
 	# Reference the VPC ID created by the `module.vpc`
 	vpc_id     = module.vpc.vpc_id
 	# Reference the private subnets from the `module.vpc` to launch EKS nodes in private subnets
