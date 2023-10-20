@@ -64,3 +64,53 @@ Service (EKS) Cluster, through Terraform.
 5. Deploy the changes to AWS.
 6. Implement a deployment file with the help of `kubectl` which will deploy an NGINX application on our EKS cluster, and
 	 then we'll be accessing that particular application with the help of Load Balancer.
+
+# 6. Networking
+
+- In [terraform.tfvars](jenkins-server/terraform.tfvars) of the Jenkins server, for example, a VPC and CIDR has been
+	defined:
+
+```hcl
+vpc_cidr       = "192.168.0.0/16"
+public_subnets = ["192.168.1.0/24"]
+```
+
+- As a refresher, this is how it works:
+
+## 6.1. `vpc_cidr`
+
+- `vpc_cidr = "192.168.0.0/16`:
+	- `vpc_cidr` defines the IP address range for the VPC, and it's specified using CIDR notation.
+	- In this case, it's set to `192.168.0.0/16`.
+	- The `/16` in the CIDR notation means that this VPC has a total of 65,536 IPv4 addresses (2^16).
+	- The VPC range is from `192.168.0.0` to `192.168.255.255`, which provides a large address space for the VPC
+		resources.
+	- Example IP addresses within this VPC could be:
+		- `192.168.1.10`
+		- `192.168.2.20`
+		- ...
+
+## 6.2. `public_subnets`
+
+- `public_subnets = ["192.168.1.0/24"]`:
+	- `public_subnets` defines the IP address ranges for the public subnets within the VPC.
+	- In this case, it specifies a list with one public subnet, `192.168.1.0/24`.
+	- The `/24` in the CIDR notation means that this subnet has 256 IPv4 addresses (2^8).
+	- The public subnets IP range is from `192.168.1.0` to `192.168.1.255`.
+	- Example IP addresses within this public subnet could be:
+		- `192.168.1.10`
+		- `192.168.1.20`
+		- ...
+
+## 6.3. How is IP Address Size Calculated?
+
+- `/16`:
+	- In a CIDR notation like `/16`, the number after the slash (`/`), represents the number of bits that are fixed for
+		the network portion of the IP address.
+	- IPv4 addresses are **32 bits in total**.
+	- In a `/16` notation, the leftmost 16 bits are fixed for the network, leaving 16 bits for host addresses (32-16=16).
+	- With 16 bits for hosts, you have 2^16 (or 65,536) possible host addresses within that network.
+- `/24`:
+	- In a CIDR notation like `/24`, 24 bits are fixed for the network portion of the IP address.
+  - This leaves 8 bits for host addresses (32-24=8).
+  - With 8 bits for hosts, you have 2^8 (or 256) possible host addresses within that network.
