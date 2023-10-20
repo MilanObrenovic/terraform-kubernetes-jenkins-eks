@@ -1,5 +1,7 @@
 # Terraform + Kubernetes + Jenkins + AWS EKS
 
+![banner.svg](misc/banner.svg)
+
 This repository focuses on a minimal DevOps setup to deploy any application via Jenkins, on Amazon Elastic Kubernetes
 Service (EKS) Cluster, through Terraform.
 
